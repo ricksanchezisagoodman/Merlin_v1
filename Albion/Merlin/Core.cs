@@ -16,7 +16,6 @@ namespace Merlin
         {
             _coreObject = new GameObject();
             lineRenderer = _coreObject.AddComponent<LineRenderer>();
-            LoginGui.AutoLogin = true;
 
             {
                 // Unity has a built-in shader that is useful for drawing

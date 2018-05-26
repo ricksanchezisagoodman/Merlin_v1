@@ -20,8 +20,6 @@ namespace Merlin.Profiles.Gatherer
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.Damage, true),
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Enemy, SpellCategory.Damage, true),
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Enemy, SpellCategory.MovementBuff, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.MovementBuff, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Heal,true)
         };
 
         private LocalPlayerCharacter _combatPlayer;
@@ -108,9 +106,9 @@ namespace Merlin.Profiles.Gatherer
                 return;
             }
 
-            if (_combatPlayer.GetHealth().GetValue() < (_combatPlayer.GetHealth().GetMaximum() * 0.99f))
+            if (_combatPlayer.GetHealth().GetValue() < (_combatPlayer.GetHealth().GetMaximum() * 0.8f))
             {
-                Core.Log("Health below 99%");
+                Core.Log("Health below 80%");
                 var healSpell = _combatSpells.Target(SpellTarget.Self).Category(SpellCategory.Heal);
 
                 if (healSpell.Any())
