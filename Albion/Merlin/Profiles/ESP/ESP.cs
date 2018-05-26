@@ -315,10 +315,6 @@ namespace Merlin.Profiles.ESP
                 try
                 {
                     var pos = Camera.main.WorldToScreenPoint(view.transform.position);
-                    //if (fleePositionUpToDate)
-                    //{
-                    //Rendering.DrawLine(localPlayer.gameObject, localPlayer.transform.position, fleePosition, Color.cyan);
-                    //}
                     pos.y = Screen.height - (pos.y + 1f);
 
                     var lineColor = Color.white;
