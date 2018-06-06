@@ -75,11 +75,12 @@ namespace Merlin.Profiles.Gatherer
          private bool StuckProtection()
          {
              if (
-                     !_localPlayerCharacterView.IsHarvesting()
+                     (!_localPlayerCharacterView.IsHarvesting()                    
                      && !_localPlayerCharacterView.IsAttacking()
                      && _localPlayerCharacterView.IsMounted
                      && Mathf.Abs(_localPlayerCharacterView.GetPosition().x - previousPlayerInfo.x) < 0.25f
-                     && Mathf.Abs(_localPlayerCharacterView.GetPosition().z - previousPlayerInfo.z) < 0.25f
+                     && Mathf.Abs(_localPlayerCharacterView.GetPosition().z - previousPlayerInfo.z) < 0.25f)
+                     || (_state.State == State.Bank || _state.State == State.Repair || _state.State == State.Travel)
                  )
              {
                  previousPlayerInfo.violationCount++;
@@ -144,8 +145,8 @@ namespace Merlin.Profiles.Gatherer
                      unstuckCoordinates.z = _localPlayerCharacterView.GetPosition().z + arrayValues[UnityEngine.Random.Range(0, arrayValues.Length)];
                      break;
                  case "variable":
-                     unstuckCoordinates.x = _localPlayerCharacterView.GetPosition().x + (UnityEngine.Random.Range(-1f, +1.01f) * UnityEngine.Random.Range(25f, 55f));
-                     unstuckCoordinates.z = _localPlayerCharacterView.GetPosition().z + (UnityEngine.Random.Range(-1f, +1.01f) * UnityEngine.Random.Range(25f, 55f));
+                     unstuckCoordinates.x = _localPlayerCharacterView.GetPosition().x + (UnityEngine.Random.Range(-1f, +1.01f) * UnityEngine.Random.Range(25f, 155f));
+                     unstuckCoordinates.z = _localPlayerCharacterView.GetPosition().z + (UnityEngine.Random.Range(-1f, +1.01f) * UnityEngine.Random.Range(25f, 155f));
                      break;
                  default:
                      break;
@@ -231,6 +232,8 @@ namespace Merlin.Profiles.Gatherer
                 else
                 {
                     Core.Log("Path not found");
+                    if (StuckProtection())
+                        return;
                     _state.Fire(Trigger.DepletedResource);
                 }
                 return;
@@ -308,6 +311,8 @@ namespace Merlin.Profiles.Gatherer
                 else
                 {
                     Core.Log("Path not found");
+                    if (StuckProtection())
+                        return;
                     _state.Fire(Trigger.DepletedResource);
                 }
                 return;

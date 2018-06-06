@@ -17,6 +17,7 @@ namespace Merlin.Profiles.Gatherer
         private bool _isDepositing;
         private bool _movingToBank = false;
         private static DateTime _nextBankAction;
+        private DateTime? _dateTimeWeFoundPathToTown = null;
 
         public void Bank()
         {
@@ -101,6 +102,9 @@ namespace Merlin.Profiles.Gatherer
                 {
                     Core.Log("Path Found to Town.");
                     _worldPathingRequest = new WorldPathingRequest(currentWorldCluster, townCluster, path, _skipUnrestrictedPvPZones);
+                    Core.Log("Chances are we are fucking stuck for no reason at all, so calling Stuck Protection now!");
+                    if (StuckProtection())
+                        return;
                 }
             }
         }
@@ -184,13 +188,17 @@ namespace Merlin.Profiles.Gatherer
                         if (!_movingToBank)
                         {
                             Core.Log("Find Bank Collider");
-
+                            if (StuckProtection())
+                                return false;
                             var bankCollider = resource.GetComponentsInChildren<Collider>().First(c => c.name.ToLowerInvariant().Contains("clickable"));
                             var bankColliderPosition = new Vector2(bankCollider.transform.position.x, bankCollider.transform.position.z);
+                            Core.Log("[bankCollider Position] ->" + bankColliderPosition);
                             var exitPositionPoint = GetDefaultBankVector(currentCluster.GetName().ToLowerInvariant());
                             var exitPosition = new Vector2(exitPositionPoint.x, exitPositionPoint.y);
                             var clampedPosition = Vector2.MoveTowards(bankColliderPosition, exitPosition, 10);
-                            var targetPosition = new Vector3(clampedPosition.x, 0, clampedPosition.y);
+                            Core.Log("[clamp position] ->" + clampedPosition);
+                            var targetPosition = new Vector3(clampedPosition.x, 10, clampedPosition.y);
+                            Core.Log("[target position] ->" + targetPosition);
 
                             if (_localPlayerCharacterView.TryFindPath(new ClusterPathfinder(), targetPosition, IsBlockedWithExitCheck, out List<Vector3> pathing))
                             {
@@ -216,10 +224,12 @@ namespace Merlin.Profiles.Gatherer
         private bool waiting(DateTime _nextAction)
         {
             if (DateTime.UtcNow < _nextAction)
-            {
+            {            
                 return true;
             }
             return false;
         }
+
+
     }
 }

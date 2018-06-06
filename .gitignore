@@ -290,3 +290,5 @@ __pycache__/
 # Albion online's Dependencies
 /Albion/Dependencies/*.dll
 /Albion/DependenciesOld/
+Albion/Dependencies/_afterjune5/Albion.Common.dll
+*.dll

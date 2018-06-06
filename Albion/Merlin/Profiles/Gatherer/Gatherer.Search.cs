@@ -40,7 +40,7 @@ namespace Merlin.Profiles.Gatherer
             
             if (_localPlayerCharacterView.GetLocalPlayerCharacter().HasAnyBrokenItem())
             {
-                Core.Log("Damaged - Items fell below 60% durability. Head to Repair in home town");
+                Core.Log("Damaged - Items fell below 25% durability. Head to Repair in home town");
                 _state.Fire(Trigger.Damaged);
                 return;
             }
@@ -106,7 +106,13 @@ namespace Merlin.Profiles.Gatherer
                 if (_failedFindAttempts > MAXIMUM_FAIL_ATTEMPTS)
                 {
                     Core.Log($"[Looking for fallback in {_gatheredSpots.Count} objects]");
-
+                    if (_gatheredSpots.Count == 0) {
+                        if (!_localPlayerCharacterView.IsMounted) HandleMounting(Vector3.zero);
+                        Core.Log("No gather spots found! try to move randomly!");
+                        _state.Configure(State.Search);
+                        if (StuckProtection())
+                            return;
+                    }
                     //Remove all fallback points older than 1 hour
                     var entriesToRemove = _gatheredSpots.Where(kvp => !kvp.Value.HarvestDate.HasValue || kvp.Value.HarvestDate.Value.AddHours(1) < DateTime.UtcNow).ToArray();
                     foreach (var entry in entriesToRemove)
@@ -123,7 +129,12 @@ namespace Merlin.Profiles.Gatherer
 
                     Core.Log($"[Found {validEntries.Length} valid fallback objects]");
                     if (validEntries.Length == 0)
-                        return;
+                    {
+                        if (!_localPlayerCharacterView.IsMounted) HandleMounting(Vector3.zero);
+                        Core.Log("No gather spots found! try to move randomly!");
+                        if (StuckProtection())
+                            return;
+                    }
 
                     //Select a random fallback point
                     var spotToUse = validEntries[UnityEngine.Random.Range(0, validEntries.Length)];
@@ -134,8 +145,13 @@ namespace Merlin.Profiles.Gatherer
                         _changeGatheringPathRequest = new PositionPathingRequest(_localPlayerCharacterView, spot3d, pathing);
                     }
                     else
+                    {
                         Core.Log($"No path to {spot3d} found. Removing it from fallback objects.");
+                        Core.Log("Lets move a little bit to check for new nodes!");
+                        if (StuckProtection())
+                            return;
 
+                    }
                     _gatheredSpots.Remove(spotToUse.Key);
                     _failedFindAttempts = 0;
                 }

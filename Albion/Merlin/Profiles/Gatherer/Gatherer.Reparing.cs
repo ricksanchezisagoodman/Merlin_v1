@@ -89,6 +89,9 @@ namespace Merlin.Profiles.Gatherer
                 {
                     Core.Log("Path Found to Town.");
                     _worldPathingRequest = new WorldPathingRequest(currentWorldCluster, townCluster, path, _skipUnrestrictedPvPZones);
+                    Core.Log("Chances are we are fucking stuck for no reason at all, so calling Stuck Protection now!");
+                    if (StuckProtection())
+                        return;
                 }
             }
         }

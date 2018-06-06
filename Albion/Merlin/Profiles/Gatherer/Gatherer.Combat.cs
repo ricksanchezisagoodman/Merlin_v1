@@ -10,13 +10,18 @@ namespace Merlin.Profiles.Gatherer
     {
         private static List<Tuple<SpellTarget, SpellCategory, bool>> SpellPriorityList = new List<Tuple<SpellTarget, SpellCategory, bool>>
         {
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Buff, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Damage, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.CrowdControl, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.CrowdControl, true),
-            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.Damage, true),
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Enemy, SpellCategory.Damage, true),
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Enemy, SpellCategory.MovementBuff, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Enemy, SpellCategory.CrowdControl, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.CrowdControl, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.Damage, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Ground, SpellCategory.MovementBuff, true),
+
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Buff, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.DiminishingReturn, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.CrowdControl, true),
+            new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Damage, true),
+
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.MovementBuff, true),
             new Tuple<SpellTarget, SpellCategory, bool>(SpellTarget.Self, SpellCategory.Heal,true)
         };
@@ -75,9 +80,10 @@ namespace Merlin.Profiles.Gatherer
                 return;
             }
 
-            if (_combatPlayer.GetHealth().GetValue() < (_combatPlayer.GetHealth().GetMaximum() * 0.99f))
+            if (_combatPlayer.GetHealth().GetValue() < (_combatPlayer.GetHealth().GetMaximum() * 0.99f) && 
+                _combatPlayer.GetEnergy().GetValue() < (_combatPlayer.GetEnergy().GetMaximum() * 0.99f))
             {
-                Core.Log("Health below 99%");
+                Core.Log("Health & Energy below 99%, rest for a bit!");
                 var healSpell = _combatSpells.Target(SpellTarget.Self).Category(SpellCategory.Heal);
 
                 if (healSpell.Any())
@@ -107,6 +113,7 @@ namespace Merlin.Profiles.Gatherer
                 }
 
                 var spells = _combatSpells.Target(target).Category(category);
+                
                 var spellToCast = spells.Any() ? spells.First() : null;
                 if (spellToCast == null)
                 {
@@ -118,26 +125,30 @@ namespace Merlin.Profiles.Gatherer
                 try
                 {
                     spellName = spellToCast.GetSpellDescriptor().TryGetName();
-
+                    Core.Log("Next spell is " + spellName + " of spell category : " + spellToCast.GetSpellDescriptor().TryGetCategory().ToString());
                     var spellSlot = spellToCast.Slot;
                     switch (target)
                     {
                         case (SpellTarget.Self):
                             Core.Log("Casting " + spellName + " on self.");
                             _localPlayerCharacterView.CastOnSelf(spellSlot);
+                            Core.Log(spellName + " was casted!");
                             break;
 
                         case (SpellTarget.Enemy):
                             Core.Log("Casting " + spellName + " on enemy.");
                             _localPlayerCharacterView.CastOn(spellSlot, _combatTarget);
+                            Core.Log(spellName + " was casted!");
                             break;
 
                         case (SpellTarget.Ground):
                             Core.Log("Casting " + spellName + " on ground.");                            
                             _localPlayerCharacterView.CastAt(spellSlot, _combatTarget.GetPosition());
+                            Core.Log(spellName + " was casted!");
                             break;
 
                         default:
+                            Core.Log($"[Spell Name {spellName} is not supported. Spell skipped]");
                             Core.Log($"[SpellTarget {target} is not supported. Spell skipped]");
                             return false;
                     }

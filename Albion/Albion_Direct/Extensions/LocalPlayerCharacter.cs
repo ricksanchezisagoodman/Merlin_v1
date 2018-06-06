@@ -39,12 +39,12 @@ namespace Albion_Direct
 
         public bool IsTheItemQualityPoor(ax5 item)
         {
-            return item.b8() <= 10;
+            return item.b8() <= 40;
         }
 
         public bool IsMountBroken(ax5 item)
         {
-            return item.b8() <= 0;
+            return item.b8() <= 45;
         }
         public bool IsMountBroken()
         {
