@@ -293,10 +293,10 @@ namespace Merlin.Profiles.Gatherer
             var minimumAttackRange = isMeleeWeapon ? MELEE_ATTACK_RANGE : RANGED_ATTACK_RANGE;
             //var isInLoS = _localPlayerCharacterView.IsInLineOfSight(mob);
 
-            if (HandlePathing(ref _harvestPathingRequest, () => centerDistance <= minimumAttackRange))
+            if (HandlePathing(ref _harvestPathingRequest, () => centerDistance <= minimumAttackRange /*&& isInLoS*/))
                 return;
 
-            if (centerDistance >= minimumAttackRange)
+            if (centerDistance >= minimumAttackRange /*|| !isInLoS*/)
             {
                 if (_localPlayerCharacterView.TryFindPath(new ClusterPathfinder(), targetCenter, IsBlockedGathering, out List<Vector3> pathing))
                 {
