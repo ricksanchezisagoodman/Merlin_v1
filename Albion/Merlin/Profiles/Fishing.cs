@@ -75,7 +75,7 @@ namespace Merlin.Profiles
                 cooldown = 1.25f;
             }
 
-            Core.Log("HaveBite: " + HaveBite.ToString() + " fishingstate: " + player.FishingState.ToString() + " cooldown:" + cooldown.ToString() );
+            //Core.Log("HaveBite: " + HaveBite.ToString() + " fishingstate: " + player.FishingState.ToString() + " cooldown:" + cooldown.ToString() );
             if (cooldown == 0 && player.FishingState != null && HaveBite) // Accept Bite
             {
                 //player.PlayerCharacter.zo<azy>().f(GameTimeStamp.Now, false);
@@ -201,7 +201,7 @@ namespace Merlin.Profiles
             get
             {
                 //s0 - int == 0 
-                if (fishingManager.MiniGame.tb() == bcu.a)
+                if (fishingManager.MiniGame.tb() == 0)
                     return true;
                 else
                     return false;
