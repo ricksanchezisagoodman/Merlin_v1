@@ -154,14 +154,31 @@ namespace Merlin.Profiles.Gatherer
         {
             //Get inventory
             var playerStorage = GameGui.Instance.CharacterInfoGui.InventoryItemStorage;
-            var ToDeposit = GetItemsForBanking(playerStorage);
+            var vaultStorage = GameGui.Instance.MultiVaultGui.MainViewVault.InventoryStorage;
+
+            var ToDeposit = new List<UIItemSlot>();
+
+            //Get all items we need that are visible. Need to find a way to get all items in player inventory.
+            var resourceTypes = Enum.GetNames(typeof(ResourceType)).Select(r => r.ToLowerInvariant()).ToArray();
+            foreach (var slot in playerStorage.ItemsSlotsRegistered)
+                if (slot != null && slot.ObservedItemView != null)
+                {
+                    var slotItemName = slot.ObservedItemView.name.ToLowerInvariant();
+                    //All items not including journals
+                    if (!slotItemName.Contains("journalitem"))
+                        if (resourceTypes.Any(r => slotItemName.Contains(r)))
+                            ToDeposit.Add(slot);
+                    //adding full journals to deposit list
+                    if (slotItemName.Contains("journalitem") && slotItemName.Contains("full"))
+                        ToDeposit.Add(slot);
+                }
             
             _isDepositing = ToDeposit != null && ToDeposit.Count > 0;
-
-            if (_isDepositing && !transferRunning)
-                StartCoroutine(TransferItemsToBank());
-            
-            return _isDepositing;
+            foreach (var item in ToDeposit)
+            {
+                GameGui.Instance.MoveItemToItemContainer(item, vaultStorage.ItemContainerProxy);
+            }
+			return _isDepositing;
         }
         private List<UIItemSlot> GetItemsForBanking(UIItemStorage storage)
         {

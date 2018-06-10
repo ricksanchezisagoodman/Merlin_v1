@@ -39,8 +39,6 @@ namespace Merlin.Profiles.Gatherer
                 _state.Fire(Trigger.EncounteredAttacker);
                 return;
             }
-                
-                
 
             if (isCurrentCluster && _allowSiegeCampTreasure && CanUseSiegeCampTreasure && (_localPlayerCharacterView.GetLoadPercent() > _percentageForSiegeCampTreasure))
             {
@@ -162,8 +160,17 @@ namespace Merlin.Profiles.Gatherer
 
         public bool Loot()
         {
-            var silver = _client.GetEntities<SilverObjectView>(x => x.CanLoot(_localPlayerCharacterView) && Vector3.Distance(_localPlayerCharacterView.transform.position, x.transform.position) < 8).FirstOrDefault();
+            var silver = _client.GetEntities<SilverObjectView>(x => Vector3.Distance(_localPlayerCharacterView.transform.position, x.transform.position) < 8).FirstOrDefault();
             if (silver != null)
+            {
+                Core.Log($"[Silver {silver.name}]");
+                _localPlayerCharacterView.Interact(silver);
+                return true;
+            }
+            
+            var loot = _client.GetEntities<LootObjectView>(x => x.CanLoot() && Vector3.Distance(_localPlayerCharacterView.transform.position, x.transform.position) < 8).FirstOrDefault();
+
+            if (loot != null)
             {
                 Core.Log($"[Silver {silver.name}]");
                 _localPlayerCharacterView.Interact(silver);
@@ -301,6 +308,7 @@ namespace Merlin.Profiles.Gatherer
 
             if (target != null)
                 Core.Log($"Resource spotted: {target.name}");
+            Core.Log($"Resource spotted: {target}");
 
             return target != default(SimulationObjectView);
         }

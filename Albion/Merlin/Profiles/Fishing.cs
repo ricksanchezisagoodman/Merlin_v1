@@ -63,6 +63,7 @@ namespace Merlin.Profiles
                 useFood = !useFood;
                 Core.Log("UseFood: " + useFood.ToString());
             }            
+
             cooldown = Mathf.MoveTowards(cooldown, 0, Time.deltaTime);
             if (useFood)
                 Fooding();
@@ -75,16 +76,12 @@ namespace Merlin.Profiles
                 cooldown = 1.25f;
             }
 
-            //Core.Log("HaveBite: " + HaveBite.ToString() + " fishingstate: " + player.FishingState.ToString() + " cooldown:" + cooldown.ToString() );
             if (cooldown == 0 && player.FishingState != null && HaveBite) // Accept Bite
             {
-                //player.PlayerCharacter.zo<azy>().f(GameTimeStamp.Now, false);
                 player.PlayerCharacter.zr<a0e>().f(GameTimeStamp.Now, false);
-                //public a zr<a>() where a : ayv;
                 cooldown = 0.25f;
                 return;
             }
-
             if (cooldown == 0 && IsFishing && IsMinigameRunning) // Handle Minigame
             {
                 if (linetention >= 0.55)
@@ -128,7 +125,7 @@ namespace Merlin.Profiles
                 }
             }
         }
-        
+
         private void ReloadFish()
         {
             UIItemSlot buffFoodSlot;
@@ -149,7 +146,7 @@ namespace Merlin.Profiles
             foreach (var slot in playerStorage.ItemsSlotsRegistered)
             {
                 if (slot != null && slot.ObservedItemView != null)
-                {                    
+                {
                     var slotItemName = slot.ObservedItemView.IconName.ToLowerInvariant();
                     //Core.Log(slotItemName);
                     if (slotItemName == fishName)
@@ -183,7 +180,6 @@ namespace Merlin.Profiles
         {
             //s3
             fishingManager.MiniGame.te(!state);
-            
         }
 
         public static bool Reeling

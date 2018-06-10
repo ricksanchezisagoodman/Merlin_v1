@@ -29,7 +29,6 @@ namespace Merlin.Profiles
 
         private void Start()
         {
-            
         }
 
         private void Update()
@@ -68,7 +67,6 @@ namespace Merlin.Profiles
                 Core.Log("GameState or Mounted.");
                 return;
             }
-                
 
             if (!target || (target && target.IsDead()))
             {
@@ -89,9 +87,10 @@ namespace Merlin.Profiles
                 return;
 
             //if (_localPlayerCharacterView.IsUnderAttack(out FightingObjectView attacker))
-                //Core.Log("You are under attack. Attack the attacker");
-                //_localPlayerCharacterView.SetSelectedObject(attacker);
-                //_localPlayerCharacterView.AttackSelectedObject();
+			//Core.Log("You are under attack. Attack the attacker");
+			//_localPlayerCharacterView.SetSelectedObject(attacker);
+			//_localPlayerCharacterView.AttackSelectedObject();
+
         }
 
         private bool TryToCastSpell(SpellTarget spellTarget, SpellCategory category, bool checkCastState)

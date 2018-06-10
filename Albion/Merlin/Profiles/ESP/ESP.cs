@@ -16,7 +16,7 @@ namespace Merlin.Profiles.ESP
             private static GUIStyle guistyle_0 = new GUIStyle(GUI.skin.label);
             private static Texture2D texture2D_0 = new Texture2D(1, 1);
 
-            public static void DrawSphere (GameObject target, float radius)
+            public static void DrawSphere(GameObject target, float radius)
             {
                 if (target.transform.Find("VisAggroRadius") == null)
                 {
@@ -244,9 +244,33 @@ namespace Merlin.Profiles.ESP
         public void StartESP(Dictionary<GatherInformation, bool> gatherInformations)
         {
             this.gatherInformations = gatherInformations;
+            StartCoroutine(GetViews());            
+        }
 
-            StartCoroutine(GetViews());
-            //StartCoroutine(AggroRadius());
+        private IEnumerator AggroRadius()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (_client.GetState() == GameState.Playing)
+                    {
+                        foreach (var mob in FindObjectsOfType<MobView>())
+                        {
+                            float aggroRadius = 0;
+                            if (mob != null && mob.gameObject != null && mob.GetTier() >= 3)
+                            {
+                                Rendering.DrawSphere(mob.gameObject, aggroRadius != 0 ? aggroRadius : 8);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Core.Log("ESP AggroRadius Error: " + e);
+                }
+                yield return new WaitForSeconds(5);
+            }
         }
 
         private void OnDisable()
@@ -400,9 +424,8 @@ namespace Merlin.Profiles.ESP
             {
                 Rendering.DrawLine(x.gameObject, x.transform.position, localPlayer.transform.position, Color.yellow);
             }
-
-
         }
+
         private void DrawResourceESPs()
         {
             var myPos = Camera.main.WorldToScreenPoint(localPlayer.transform.position);
@@ -411,6 +434,7 @@ namespace Merlin.Profiles.ESP
             {
                 Rendering.DrawLine(localPlayer.gameObject, localPlayer.transform.position, fleePosition, Color.cyan);
             }*/
+
 
             foreach (var view in resources)
             {

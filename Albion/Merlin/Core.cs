@@ -12,6 +12,8 @@ namespace Merlin
 
         public static LineRenderer lineRenderer;
 
+        public static string lastLog;
+
         public static void Load()
         {
             _coreObject = new GameObject();
@@ -53,8 +55,10 @@ namespace Merlin
         private static string lastLog;
         public static void Log(string message)
         {
-            if(message != lastLog)
+            if (message != lastLog)
+            {
                 Debug.Log($"[{DateTime.Now}] {message}");
+            }
             lastLog = message;
         }
 
